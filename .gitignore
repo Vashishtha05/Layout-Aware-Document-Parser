@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Model checkpoints and large artifacts
+layoutlmv3_funsd_finetuned/
+*.pt
+*.bin
+
+# Generated outputs (uncomment to exclude if files get too large)
+# benchmark_results.csv
+# parsed_document.json
+# *.png
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
