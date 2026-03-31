@@ -162,13 +162,3 @@ The parser converts token-level predictions into region-level JSON objects:
 - Add ONNX or TorchScript export for production deployment.
 - Add document-level post-processing heuristics.
 
-## License
-
-Add your preferred license (for example, MIT) before public release.
-
-## Acknowledgements
-
-- Hugging Face Transformers and Datasets
-- Microsoft LayoutLMv3
-- FUNSD dataset authors
-- PyMuPDF maintainers
