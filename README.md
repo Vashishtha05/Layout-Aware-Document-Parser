@@ -1,133 +1,183 @@
-# Layout Aware Document Parser
+# Layout-Aware Document Parser
 
-A complete notebook-based pipeline for layout-aware document understanding using LayoutLMv3, trained on FUNSD, and applied to PDF parsing with PyMuPDF.
+<p align="center">
+  <img src="https://img.shields.io/badge/NLP-LayoutLMv3-blue?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Dataset-FUNSD-green?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Framework-PyTorch-red?style=for-the-badge">
+  <img src="https://img.shields.io/badge/OCR-PyMuPDF-orange?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Task-Document%20Understanding-purple?style=for-the-badge">
+</p>
 
-## Overview
+<p align="center">
+A layout-aware document understanding pipeline using LayoutLMv3 to extract structured information from form-based documents while combining textual, visual, and spatial features.
+</p>
 
-This project fine-tunes `microsoft/layoutlmv3-base` for token classification on form documents. The notebook demonstrates the full workflow:
+---
 
-1. Load and inspect the FUNSD dataset.
-2. Build a custom PyTorch dataset that aligns words, bounding boxes, and labels.
-3. Fine-tune LayoutLMv3 for entity tagging (`QUESTION`, `ANSWER`, `HEADER`, `O`).
-4. Evaluate performance before and after fine-tuning.
-5. Run an end-to-end PDF pipeline:
-   - Extract words and bounding boxes with PyMuPDF.
-   - Classify each token with the fine-tuned model.
-   - Convert predictions into structured JSON regions.
-   - Visualize results.
+## 📌 Overview
 
-## Key Features
+This project fine-tunes **LayoutLMv3** for token classification using the **FUNSD** dataset and applies the trained model to PDF documents using **PyMuPDF**.
 
-- End-to-end training + inference in a single notebook.
-- Layout-aware modeling with text, image, and 2D spatial features.
-- Baseline vs fine-tuned benchmark reporting.
-- Region-level structured output (`parsed_document.json`).
-- Visual diagnostics for model behavior.
+The pipeline combines document text, images, and **2D spatial information** to identify entities such as **QUESTION, ANSWER, HEADER, and O**, then converts token-level predictions into structured document regions.
 
-## Tech Stack
+---
 
-- Python 3.10+
-- PyTorch
-- Transformers (Hugging Face)
-- Datasets + Evaluate
-- seqeval
-- PyMuPDF (`fitz`)
-- Pillow
-- Matplotlib
+## ✨ Features
 
-## Model and Dataset
+* Fine-tuning **LayoutLMv3** on FUNSD
+* Layout-aware token classification using text and bounding boxes
+* Custom PyTorch dataset for word, box, and label alignment
+* Baseline vs fine-tuned performance comparison
+* PDF word and bounding-box extraction using **PyMuPDF**
+* BIO-based entity prediction and region grouping
+* Confidence-aware structured JSON output
+* Visual comparison of predictions and ground truth
+* End-to-end training and inference in a single notebook
 
-- Base model: `microsoft/layoutlmv3-base`
-- Fine-tuning dataset: `nielsr/funsd-layoutlmv3`
-- Task type: token classification
-- Label space:
-  - `O`
-  - `B-QUESTION`, `I-QUESTION`
-  - `B-ANSWER`, `I-ANSWER`
-  - `B-HEADER`, `I-HEADER`
+---
 
-## Pipeline Architecture
+## 📐 Evaluation Metrics
 
-```text
-PDF/Image -> OCR Words + Boxes -> LayoutLMv3 Token Classification -> BIO Labels -> Region Grouping -> Structured JSON
-```
+| Metric          | Purpose                                  |
+| --------------- | ---------------------------------------- |
+| Precision       | Measures correct entity predictions      |
+| Recall          | Measures entity coverage                 |
+| F1 Score        | Overall token-classification performance |
+| Confidence      | Measures prediction certainty            |
+| Region Accuracy | Evaluates structured document regions    |
 
-Detailed flow in notebook:
+---
 
-1. Data prep: FUNSD loading and label mapping.
-2. Training: fine-tuning LayoutLMv3 with differential learning rates.
-3. Evaluation: seqeval metrics (`precision`, `recall`, `F1`).
-4. Inference:
-   - Chunk long documents.
-   - Predict token labels + confidence.
-   - Merge contiguous BIO spans into entity regions.
-5. Output generation:
-   - Benchmark CSV
-   - Parsed JSON
-   - Visualization PNG files
+## ⚙️ Tech Stack
 
-## Repository Structure
+| Technology                | Usage                                |
+| ------------------------- | ------------------------------------ |
+| Python 3.10+              | Core development                     |
+| PyTorch                   | Model training                       |
+| Hugging Face Transformers | LayoutLMv3 implementation            |
+| Datasets                  | FUNSD dataset loading                |
+| Evaluate / seqeval        | Evaluation metrics                   |
+| PyMuPDF                   | PDF text and bounding-box extraction |
+| Pillow                    | Image processing                     |
+| Matplotlib                | Visualization                        |
 
-```text
-Layout Aware Document Parser/
-  file.ipynb
-  README.md
-```
+---
 
-Generated after running the notebook:
+## 🧠 Model and Dataset
+
+**Base Model:** `microsoft/layoutlmv3-base`
+
+**Dataset:** `nielsr/funsd-layoutlmv3`
+
+**Task:** Token Classification
+
+### Label Space
 
 ```text
-benchmark_results.csv
-parsed_document.json
-funsd_ground_truth.png
-predictions_vs_ground_truth.png
-full_pipeline_output.png
-layoutlm_training_curves.png
-layoutlmv3_funsd_finetuned/
+O
+B-QUESTION
+I-QUESTION
+B-ANSWER
+I-ANSWER
+B-HEADER
+I-HEADER
 ```
 
-## Quick Start
+---
 
-### 1) Clone repository
+## 🚀 Getting Started
+
+### 1️⃣ Clone Repository
 
 ```bash
 git clone https://github.com/<your-username>/<your-repo>.git
 cd <your-repo>
 ```
 
-### 2) Open notebook
-
-Open `file.ipynb` in Jupyter or VS Code Notebook.
-
-### 3) Install dependencies
-
-The notebook includes install cells. If you prefer local install:
+### 2️⃣ Install Dependencies
 
 ```bash
 pip install -q seqeval pymupdf transformers datasets evaluate jiwer Pillow torch torchvision
 ```
 
-### 4) Run cells in order
+### 3️⃣ Open Notebook
 
-Execute all cells top to bottom to:
+Open the notebook in **Jupyter** or **VS Code Notebook**:
 
-- fine-tune the model,
-- evaluate benchmark metrics,
-- generate parser outputs and visualizations.
+```text
+file.ipynb
+```
 
-## Training Configuration (Current Notebook)
+### 4️⃣ Run Cells in Order
 
-- Epochs: 10
-- Learning rate (encoder): `5e-5`
-- Learning rate (classifier head): `2.5e-4`
-- Weight decay: `0.01`
-- Batch size: `2`
-- Max sequence length: `512`
-- Warmup schedule: linear warmup for first 10% of total steps
+Execute the notebook from top to bottom to:
 
-## Inference and Output Schema
+* Prepare the FUNSD dataset
+* Fine-tune LayoutLMv3
+* Evaluate the model
+* Process PDF documents
+* Generate structured JSON
+* Create visualization outputs
 
-The parser converts token-level predictions into region-level JSON objects:
+---
+
+## 🖥️ How It Works
+
+1. **FUNSD** is loaded and document labels are mapped to BIO tags.
+2. A custom PyTorch dataset aligns words, bounding boxes, and labels.
+3. **LayoutLMv3** is fine-tuned for document token classification.
+4. Baseline and fine-tuned models are evaluated using precision, recall, and F1.
+5. **PyMuPDF** extracts words and bounding boxes from PDF documents.
+6. The fine-tuned model predicts labels and confidence scores for each token.
+7. Contiguous BIO predictions are merged into structured document regions.
+8. Predictions are exported as **JSON** and visualization images.
+
+---
+
+## 🔍 Pipeline Architecture
+
+```text
+PDF / Image
+     │
+     ▼
+PyMuPDF Word + Bounding Box Extraction
+     │
+     ▼
+LayoutLMv3 Token Classification
+     │
+     ▼
+BIO Labels + Confidence
+     │
+     ▼
+Region Grouping
+     │
+     ▼
+Structured JSON
+     │
+     ▼
+Visualization
+```
+
+---
+
+## 📊 Training Configuration
+
+| Parameter                | Value              |
+| ------------------------ | ------------------ |
+| Epochs                   | 10                 |
+| Encoder Learning Rate    | `5e-5`             |
+| Classifier Learning Rate | `2.5e-4`           |
+| Weight Decay             | `0.01`             |
+| Batch Size               | `2`                |
+| Max Sequence Length      | `512`              |
+| Warmup                   | First 10% of steps |
+| Model                    | LayoutLMv3 Base    |
+
+---
+
+## 📄 Output Schema
+
+The parser converts token-level predictions into region-level JSON:
 
 ```json
 {
@@ -143,22 +193,60 @@ The parser converts token-level predictions into region-level JSON objects:
 }
 ```
 
-## Reproducibility Notes
+---
 
-- Results depend on GPU type, seed behavior, and library versions.
-- For stable comparisons, pin package versions and set random seeds.
-- The notebook currently uses runtime-local paths for some outputs.
+## 📁 Project Structure
 
-## Limitations
+```text
+layout-aware-document-parser/
+├── file.ipynb
+├── README.md
+├── benchmark_results.csv
+├── parsed_document.json
+├── funsd_ground_truth.png
+├── predictions_vs_ground_truth.png
+├── full_pipeline_output.png
+├── layoutlm_training_curves.png
+└── layoutlmv3_funsd_finetuned/
+```
 
-- FUNSD is a relatively small dataset.
-- Generalization to unseen document templates may require domain adaptation.
-- Chunk-based inference can split contextual spans across chunk boundaries.
+---
 
-## Roadmap
+## 📄 Notes
 
-- Add deterministic seed setup across Python, NumPy, and PyTorch.
-- Add script-based training and evaluation outside notebook.
-- Add ONNX or TorchScript export for production deployment.
-- Add document-level post-processing heuristics.
+* FUNSD is used as the primary document-understanding dataset.
+* LayoutLMv3 uses textual, visual, and spatial document information.
+* PyMuPDF extracts PDF words and their bounding boxes for inference.
+* Long documents are processed using sequence chunking.
+* Results may vary depending on GPU, random seed, and library versions.
+* Package versions and random seeds should be pinned for reproducible experiments.
 
+---
+
+## ⚠️ Limitations
+
+* FUNSD is relatively small and focused on form documents.
+* Generalization to unseen document layouts may require additional domain adaptation.
+* Chunk-based inference can split contextual entities across boundaries.
+* The current implementation is primarily notebook-based.
+
+---
+
+## 🚧 Roadmap
+
+* Add deterministic seed configuration.
+* Move training and evaluation into standalone Python scripts.
+* Add ONNX/TorchScript export for deployment.
+* Add document-level post-processing.
+* Improve handling of long documents and cross-chunk entities.
+
+---
+
+## 👨‍💻 Author
+
+**Vashishtha Verma**
+
+* 🤖 Machine Learning & Generative AI
+* 🧠 NLP & Large Language Models
+* 📄 Document AI & OCR
+* 💻 Software Engineering & DSA
